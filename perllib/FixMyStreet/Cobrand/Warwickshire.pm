@@ -32,4 +32,16 @@ sub contact_email {
 }
 sub contact_name { 'Warwickshire County Council (do not reply)'; }
 
+sub open311_config {
+    my ($self, $row, $h, $params) = @_;
+
+    my $extra = $row->get_extra_fields;
+    if ($h->{closest_address}) {
+        push @$extra, { name => 'closest_address', value => $h->{closest_address} }
+    }
+    $row->set_extra_fields( @$extra );
+
+    $params->{extended_description} = 'warwickshire';
+}
+
 1;

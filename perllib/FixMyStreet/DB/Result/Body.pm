@@ -127,4 +127,27 @@ sub areas {
     return \%ids;
 }
 
+=head2 get_cobrand_handler
+
+Get a cobrand object for this body, if there is one.
+
+e.g.
+    * if the problem was sent to Bromley it will return ::Bromley
+    * if the problem was sent to Camden it will return nothing
+
+=cut
+
+sub get_cobrand_handler {
+    my $self = shift;
+
+    my $areas = $self->areas;
+
+    foreach my $avail ( FixMyStreet::Cobrand->available_cobrand_classes ) {
+        my $class = FixMyStreet::Cobrand->get_class_for_moniker($avail->{moniker});
+        my $cobrand = $class->new({});
+        next unless $cobrand->can('council_id');
+        return $cobrand if $areas->{$cobrand->council_id};
+    }
+}
+
 1;

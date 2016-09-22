@@ -1,5 +1,6 @@
 package FixMyStreet::Cobrand::UK;
 use base 'FixMyStreet::Cobrand::Default';
+use strict;
 
 use JSON::MaybeXS;
 use mySociety::MaPit;

@@ -55,4 +55,13 @@ sub contact_email {
     return join( '@', 'fixmystreet', 'royalgreenwich.gov.uk' );
 }
 
+sub open311_config {
+    my ($self, $row, $h, $params) = @_;
+
+    my $extra = $row->get_extra_fields;
+    # Greenwich doesn't have category metadata to fill this
+    push @$extra, { name => 'external_id', value => $row->id };
+    $row->set_extra_fields( @$extra );
+}
+
 1;
