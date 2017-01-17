@@ -774,6 +774,15 @@ subtest 'check duplicate reports' => sub {
     is $problem2->duplicates->[0]->title, $problem1->title, 'problem2 includes problem1 in duplicates';
 };
 
+subtest 'get report time ago in weeks' => sub {
+  my ($problem) = $mech->create_problems_for_body(1, $body_ids{2651}, 'TITLE');
+  $problem->update( {
+    confirmed => DateTime->now->subtract( weeks => 2)
+  } );
+
+  is $problem->time_ago, '2 weeks', 'problem returns time ago in weeks';
+};
+
 END {
     $problem->comments->delete if $problem;
     $problem->delete if $problem;
