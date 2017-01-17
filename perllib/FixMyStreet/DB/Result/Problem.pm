@@ -659,6 +659,18 @@ sub body {
     return $body;
 }
 
+=head2 time_ago
+
+  Returns how long ago a problem was reported in weeks
+
+=cut
+
+sub time_ago {
+  my $self = shift;
+
+  return Utils::prettify_duration( time() - $self->confirmed->epoch, 'week' );
+}
+
 =head2 response_templates
 
 Returns all ResponseTemplates attached to this problem's bodies, in alphabetical
