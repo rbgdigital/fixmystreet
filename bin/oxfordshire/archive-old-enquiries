@@ -1,0 +1,77 @@
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+require 5.8.0;
+
+BEGIN {
+    use File::Basename qw(dirname);
+    use File::Spec;
+    my $d = dirname(File::Spec->rel2abs($0));
+    require "$d/../../setenv.pl";
+}
+
+use FixMyStreet;
+use FixMyStreet::App;
+use FixMyStreet::DB;
+use FixMyStreet::Cobrand;
+use FixMyStreet::Map;
+use FixMyStreet::Email;
+
+use Data::Dumper;
+
+my $result = FixMyStreet::DB->resultset('Problem')->search({
+    bodies_str => '2237',
+    lastupdate => { '<', "2016-01-01 00:00:00" },
+    lastupdate => { '>', "2015-01-01 00:00:00" },
+    state      => { '!=', 'closed' },
+},
+{
+    group_by => ['user_id', 'id']
+});
+
+while ( my $problem = $result->next ) {
+    # Get user
+    my $user = $problem->user;
+    my @problems = $user->problems;
+
+    my $cobrand = FixMyStreet::Cobrand->get_class_for_moniker(@problems[0]->cobrand)->new();
+    $cobrand->set_lang_and_domain(@problems[0]->lang, 1);
+    FixMyStreet::Map::set_map_class($cobrand->map_type);
+
+    my %h = (
+      reports => [@problems],
+      report_count => scalar(@problems),
+      site_name => $cobrand->moniker,
+      user => $user,
+      cobrand => $cobrand,
+    );
+
+    # Send email
+    my $email_result = FixMyStreet::Email::send_cron(
+        $result->result_source->schema,
+        'archive.txt',
+        \%h,
+        {
+            To => [ [ $user->email, $user->name ] ],
+        },
+        undef,
+        undef,
+        $cobrand,
+        @problems[0]->lang,
+    );
+
+    foreach my $p ( @problems ) {
+        $p->update({ state => 'closed' });
+    }
+}
+
+my $result = FixMyStreet::DB->resultset('Problem')->search({
+    bodies_str => '2237',
+    lastupdate => { '>', "2015-01-01 00:00:00" },
+    state      => { '!=', 'closed' },
+});
+
+while ( my $problem = $result->next ) {
+    $problem->update({ state => 'closed' });
+}
