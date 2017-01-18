@@ -5,6 +5,7 @@ use Test::More;
 
 use FixMyStreet::TestMech;
 use FixMyStreet;
+use FixMyStreet::App;
 use FixMyStreet::DB;
 use mySociety::Locale;
 use Sub::Override;
@@ -53,7 +54,7 @@ is $problem->whensent,   undef, 'inflating null confirmed ok';
 is $problem->lastupdate, undef, 'inflating null confirmed ok';
 is $problem->created,  undef, 'inflating null confirmed ok';
 
-for my $test ( 
+for my $test (
     {
         desc => 'more or less empty problem',
         changed => {},
@@ -242,7 +243,7 @@ for my $test (
     };
 }
 
-for my $test ( 
+for my $test (
     {
         state => 'partial',
         is_visible  => 0,
@@ -781,6 +782,32 @@ subtest 'get report time ago in weeks' => sub {
     } );
 
     is $problem->time_ago, '2 weeks', 'problem returns time ago in weeks';
+};
+
+subtest 'generates a tokenised url for a user' => sub {
+    my ($problem) = $mech->create_problems_for_body(1, $body_ids{2651}, 'TITLE');
+    my $url = $problem->tokenised_url($user);
+    (my $token = $url) =~ s/\/M\///g;
+
+    like $url, qr/\/M\//, 'problem generates tokenised url';
+
+    my $token_obj = FixMyStreet::App->model('DB::Token')->find( {
+        scope => 'email_sign_in', token => $token
+    } );
+    is $token, $token_obj->token, 'token is generated in database with correct scope';
+    is $token_obj->data->{r}, $problem->url, 'token has correct redirect data';
+};
+
+subtest 'stores params in a token' => sub {
+    my ($problem) = $mech->create_problems_for_body(1, $body_ids{2651}, 'TITLE');
+    my $url = $problem->tokenised_url($user, { foo => 'bar', baz => 'boo'});
+    (my $token = $url) =~ s/\/M\///g;
+
+    my $token_obj = FixMyStreet::App->model('DB::Token')->find( {
+        scope => 'email_sign_in', token => $token
+    } );
+
+    is_deeply $token_obj->data->{p}, { foo => 'bar', baz => 'boo'}, 'token has correct params';
 };
 
 END {
