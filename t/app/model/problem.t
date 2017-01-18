@@ -775,12 +775,12 @@ subtest 'check duplicate reports' => sub {
 };
 
 subtest 'get report time ago in weeks' => sub {
-  my ($problem) = $mech->create_problems_for_body(1, $body_ids{2651}, 'TITLE');
-  $problem->update( {
-    confirmed => DateTime->now->subtract( weeks => 2)
-  } );
+    my ($problem) = $mech->create_problems_for_body(1, $body_ids{2651}, 'TITLE');
+    $problem->update( {
+        confirmed => DateTime->now->subtract( weeks => 2)
+    } );
 
-  is $problem->time_ago, '2 weeks', 'problem returns time ago in weeks';
+    is $problem->time_ago, '2 weeks', 'problem returns time ago in weeks';
 };
 
 END {
