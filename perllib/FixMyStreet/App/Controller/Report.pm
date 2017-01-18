@@ -339,7 +339,7 @@ sub inspect : Private {
         my %update_params = ();
 
         if ($permissions->{report_inspect}) {
-            foreach (qw/detailed_information traffic_information duplicate_of/) {
+            foreach (qw/detailed_information traffic_information duplicate_of defect_type/) {
                 $problem->set_extra_metadata( $_ => $c->get_param($_) );
             }
 
@@ -347,6 +347,7 @@ sub inspect : Private {
                 $update_text = Utils::cleanup_text( $c->get_param('public_update'), { allow_multiline => 1 } );
                 if ($update_text) {
                     $problem->set_extra_metadata( inspected => 1 );
+                    $c->forward( '/admin/log_edit', [ $problem->id, 'problem', 'inspected' ] );
                     $reputation_change = 1;
                 } else {
                     $valid = 0;
