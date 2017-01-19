@@ -98,4 +98,35 @@ subtest 'sends emails to a user' => sub {
     unlike  $body, qr/Really old report/, 'Email body does not have old report';
 };
 
+subtest 'user with old reports does not get email' => sub {
+  $mech->clear_emails_ok;
+  $mech->email_count_is(0);
+
+  $mech->create_problems_for_body(4, $oxfordshire->id, 'Really old report', {
+      areas      => ',2237,',
+      lastupdate => '2014-12-01 07:00:00',
+      user       => $user,
+  });
+
+  FixMyStreet::Script::ArchiveOldEnquiries::archive();
+
+  my @emails = $mech->get_email;
+  $mech->email_count_is(0);
+};
+
+subtest 'user with new reports does not get email' => sub {
+  $mech->clear_emails_ok;
+  $mech->email_count_is(0);
+
+  $mech->create_problems_for_body(4, $oxfordshire->id, 'Shiny new report', {
+      areas      => ',2237,',
+      user       => $user,
+  });
+
+  FixMyStreet::Script::ArchiveOldEnquiries::archive();
+
+  my @emails = $mech->get_email;
+  $mech->email_count_is(0);
+};
+
 done_testing();
