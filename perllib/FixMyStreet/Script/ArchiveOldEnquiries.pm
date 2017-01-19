@@ -12,36 +12,51 @@ use FixMyStreet::Map;
 use FixMyStreet::Email;
 
 sub archive {
-    my $problems_2015 = FixMyStreet::DB->resultset('Problem')->search({
+    my @user_ids = FixMyStreet::DB->resultset('Problem')->search({
         bodies_str => '2237',
-        lastupdate => { '<', "2016-01-01 00:00:00" },
-        lastupdate => { '>', "2015-01-01 00:00:00" },
+        -and       => [
+          lastupdate => { '<', "2016-01-01 00:00:00" },
+          lastupdate => { '>', "2015-01-01 00:00:00" },
+        ],
         state      => { '!=', 'closed' },
     },
     {
-        group_by => ['user_id', 'id']
+        distinct => 1,
+        columns  => ['user_id'],
+    })->all;
+
+    @user_ids = map { $_->user_id } @user_ids;
+
+    my $users = FixMyStreet::DB->resultset('User')->search({
+        id => @user_ids
     });
 
-    while ( my $problem = $problems_2015->next ) {
-        send_email_and_close($problem, $problems_2015->result_source->schema);
+    while ( my $user = $users->next ) {
+        send_email_and_close($user);
     }
 
     my $problems_2014 = FixMyStreet::DB->resultset('Problem')->search({
         bodies_str => '2237',
-        lastupdate => { '>', "2015-01-01 00:00:00" },
+        lastupdate => { '<', "2015-01-01 00:00:00" },
         state      => { '!=', 'closed' },
     });
 
-    while ( my $problem = $problems_2014->next ) {
-        close_report($problem);
-    }
+    $problems_2014->update({ state => 'closed' });
 }
 
 sub send_email_and_close {
-    my ($problem, $schema) = @_;
+    my ($user) = @_;
 
-    my $user = $problem->user;
-    my @problems = $user->problems;
+    my $problems = $user->problems->search({
+        bodies_str => '2237',
+        -and       => [
+          lastupdate => { '<', "2016-01-01 00:00:00" },
+          lastupdate => { '>', "2015-01-01 00:00:00" },
+        ],
+        state      => { '!=', 'closed' },
+    });
+
+    my @problems = $problems->all;
 
     my $cobrand = FixMyStreet::Cobrand->get_class_for_moniker(@problems[0]->cobrand)->new();
     $cobrand->set_lang_and_domain(@problems[0]->lang, 1);
@@ -57,7 +72,7 @@ sub send_email_and_close {
 
     # Send email
     my $email_result = FixMyStreet::Email::send_cron(
-        $schema,
+        $problems->result_source->schema,
         'archive.txt',
         \%h,
         {
@@ -69,12 +84,5 @@ sub send_email_and_close {
         @problems[0]->lang,
     );
 
-    foreach my $p ( @problems ) {
-        close_report($p);
-    }
-}
-
-sub close_report {
-    my $problem = shift;
-    $problem->update({ state => 'closed' });
+    $problems->update({ state => 'closed' });
 }
