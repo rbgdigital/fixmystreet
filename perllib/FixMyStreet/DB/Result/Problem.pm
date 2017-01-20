@@ -667,8 +667,9 @@ sub body {
 =cut
 
 sub time_ago {
-  my $self = shift;
-  my $duration = time() - $self->confirmed->epoch;
+  my ( $self, $date ) = @_;
+  $date ||= 'confirmed';
+  my $duration = time() - $self->$date->epoch;
   my $nearest;
 
   if ($duration < 3600) {
@@ -685,7 +686,7 @@ sub time_ago {
     $nearest = 'year';
   }
 
-  return Utils::prettify_duration( time() - $self->confirmed->epoch, $nearest );
+  return Utils::prettify_duration( time() - $self->$date->epoch, $nearest );
 }
 
 =head2 response_templates
