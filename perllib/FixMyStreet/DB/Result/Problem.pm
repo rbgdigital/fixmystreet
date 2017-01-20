@@ -667,26 +667,26 @@ sub body {
 =cut
 
 sub time_ago {
-  my ( $self, $date ) = @_;
-  $date ||= 'confirmed';
-  my $duration = time() - $self->$date->epoch;
-  my $nearest;
+    my ( $self, $date ) = @_;
+    $date ||= 'confirmed';
+    my $duration = time() - $self->$date->epoch;
+    my $nearest;
 
-  if ($duration < 3600) {
-    $nearest = 'minute';
-  } elsif ($duration < 3600*24) {
-    $nearest = 'hour';
-  } elsif ($duration < 3600*24*7) {
-    $nearest = 'day';
-  } elsif ($duration < 3600*24*7*4) {
-    $nearest = 'week';
-  } elsif ($duration < 3600*24*7*4*12) {
-    $nearest = 'month';
-  } else {
-    $nearest = 'year';
-  }
+    if ($duration < 3600) {
+      $nearest = 'minute';
+    } elsif ($duration < 3600*24) {
+      $nearest = 'hour';
+    } elsif ($duration < 3600*24*7) {
+      $nearest = 'day';
+    } elsif ($duration < 3600*24*7*4) {
+      $nearest = 'week';
+    } elsif ($duration < 3600*24*7*4*12) {
+      $nearest = 'month';
+    } else {
+      $nearest = 'year';
+    }
 
-  return Utils::prettify_duration( time() - $self->$date->epoch, $nearest );
+    return Utils::prettify_duration( time() - $self->$date->epoch, $nearest );
 }
 
 =head2 response_templates
