@@ -125,8 +125,12 @@ subtest 'user with new reports does not get email' => sub {
 
   FixMyStreet::Script::ArchiveOldEnquiries::archive();
 
-  my @emails = $mech->get_email;
   $mech->email_count_is(0);
 };
 
 done_testing();
+
+END {
+    $mech->delete_user($user);
+    $mech->delete_body($oxfordshire);
+}
