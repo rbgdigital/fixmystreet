@@ -45,13 +45,13 @@
                 <span class="item-list__item__state">[% problem.response_priority.name %]</span>
             [% END %]
             [%- IF c.cobrand.moniker != 'fixamingata' %] [%# Default: %]
-                [%- prettify_dt( problem.confirmed, 1 ) %]
+                [% tprintf(loc('Reported %s ago'), problem.time_ago) %]
             [%- ELSE %] [%# Swedish cobrand fixamingata: %]
                 [%- prettify_dt( problem.confirmed) %]
             [%- END %]
             [%- IF dist %], [% dist %]km[% END %]
             [%- IF problem.confirmed != problem.lastupdate AND problem.whensent != problem.lastupdate %],
-                [% tprintf(loc('last updated %s'), prettify_dt( problem.lastupdate, 1 ) ) %]
+                [% tprintf(loc('last updated %s ago'), problem.time_ago('lastupdate') ) %]
             [%- END %]
             [% IF include_sentinfo %]
                 [% IF c.cobrand.is_council && !c.cobrand.owns_problem( problem ) %]
