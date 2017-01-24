@@ -829,6 +829,12 @@ subtest 'return how many days ago a problem was reported' => sub {
       confirmed => DateTime->now->subtract( weeks => 2  )
     } );
     is $problem->days_ago, 14, 'days_ago returns the amount of days';
+
+    $problem->update( {
+      lastupdate => DateTime->now->subtract( days => 4)
+    } );
+
+    is $problem->days_ago('lastupdate'), 4, 'days_ago allows other dates to be specified';
 };
 
 END {
