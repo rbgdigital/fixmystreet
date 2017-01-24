@@ -210,6 +210,19 @@ sub body {
     return $self->from_body->name;
 }
 
+=head2 area_ids
+
+Returns the areas a user has been assigned to as an array
+
+=cut
+
+sub area_ids {
+    my $self = shift;
+    return [] if !defined $self->areas;
+    my @areas = grep length, split(/,/, $self->areas);
+    return [ @areas ];
+}
+
 =head2 belongs_to_body
 
     $belongs_to_body = $user->belongs_to_body( $bodies );
