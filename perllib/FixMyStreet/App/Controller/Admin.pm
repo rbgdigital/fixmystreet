@@ -1290,7 +1290,7 @@ sub user_edit : Path('user_edit') : Args(1) {
         if (!$user->from_body) {
             # Non-staff users aren't allowed any permissions or to be in an area
             $user->admin_user_body_permissions->delete;
-            $user->area_id(undef);
+            $user->areas(undef);
             delete $c->stash->{areas};
             delete $c->stash->{fetched_areas_body_id};
         } elsif ($c->stash->{available_permissions}) {
