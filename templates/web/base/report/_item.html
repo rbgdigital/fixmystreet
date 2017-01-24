@@ -55,7 +55,11 @@
             [%- END %]
             [%- IF dist %], [% dist %]km[% END %]
             [%- IF problem.confirmed != problem.lastupdate AND problem.whensent != problem.lastupdate %],
-                [% tprintf(loc('last updated %s ago'), problem.time_ago('lastupdate') ) %]
+                [%- IF problem.days_ago('lastupdate') <= 28 %]
+                  [% tprintf(loc('last updated %s days ago'), problem.days_ago('lastupdate') ) %]
+                [%- ELSE %]
+                  [% tprintf(loc('last updated %s'), problem.lastupdate )  %]
+                [%- END %]
             [%- END %]
             [% IF include_sentinfo %]
                 [% IF c.cobrand.is_council && !c.cobrand.owns_problem( problem ) %]
