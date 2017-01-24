@@ -806,6 +806,12 @@ subtest 'get report time ago in appropiate format' => sub {
       confirmed => DateTime->now->subtract( years => 2 )
     } );
     is $problem->time_ago, '2 years', 'problem returns time ago in years';
+
+    $problem->update( {
+      confirmed => DateTime->now->subtract( weeks => 2  )
+    } );
+    is $problem->days_ago, 14, 'problem allows nearest to be defined';
+
 };
 
 subtest 'time ago works with other dates' => sub {
@@ -815,6 +821,14 @@ subtest 'time ago works with other dates' => sub {
       lastupdate => DateTime->now->subtract( days => 4)
     } );
     is $problem->time_ago('lastupdate'), '4 days', 'problem returns last updated time ago in days';
+};
+
+subtest 'return how many days ago a problem was reported' => sub {
+    my ($problem) = $mech->create_problems_for_body(1, $body_ids{2651}, 'TITLE');
+    $problem->update( {
+      confirmed => DateTime->now->subtract( weeks => 2  )
+    } );
+    is $problem->days_ago, 14, 'days_ago returns the amount of days';
 };
 
 END {
