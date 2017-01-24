@@ -696,7 +696,7 @@ sub time_ago {
 =cut
 
 sub days_ago {
-  my ( $self, $date, $nearest ) = @_;
+  my ( $self, $date ) = @_;
   $date ||= 'confirmed';
   my $now = DateTime->now( time_zone => FixMyStreet->time_zone || FixMyStreet->local_time_zone );
   my $duration = $now->delta_days($self->$date);
