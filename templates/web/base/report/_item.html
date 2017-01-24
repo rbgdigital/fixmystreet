@@ -45,7 +45,11 @@
                 <span class="item-list__item__state">[% problem.response_priority.name %]</span>
             [% END %]
             [%- IF c.cobrand.moniker != 'fixamingata' %] [%# Default: %]
-                [% tprintf(loc('Reported %s ago'), problem.time_ago) %]
+                [%- IF problem.days_ago <= 28 %]
+                  [% tprintf(loc('Reported %s days ago'), problem.days_ago) %]
+                [%- ELSE %]
+                  [% prettify_dt( problem.confirmed, 1 ) %]
+                [%- END %]
             [%- ELSE %] [%# Swedish cobrand fixamingata: %]
                 [%- prettify_dt( problem.confirmed) %]
             [%- END %]
