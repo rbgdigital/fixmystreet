@@ -1,4 +1,4 @@
-Subject: Your [% site_name %] reports on FixMyStreet
+Subject: Your reports on [% site_name %] 
 
 Hello [% user.name %],
 
