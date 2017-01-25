@@ -55,8 +55,8 @@ sub send_email_and_close {
 
     return if scalar(@problems) == 0;
 
-    my $cobrand = FixMyStreet::Cobrand->get_class_for_moniker(@problems[0]->cobrand)->new();
     $cobrand->set_lang_and_domain(@problems[0]->lang, 1);
+    my $cobrand = FixMyStreet::Cobrand->get_class_for_moniker('oxfordshire')->new();
     FixMyStreet::Map::set_map_class($cobrand->map_type);
 
     my %h = (
