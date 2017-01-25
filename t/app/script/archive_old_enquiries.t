@@ -46,8 +46,6 @@ subtest 'sets reports to the correct status' => sub {
         state      => 'in progress'
     });
 
-    print $report2->bodies_str;
-
     FixMyStreet::Script::ArchiveOldEnquiries::archive();
 
     $report->discard_changes;
@@ -104,7 +102,7 @@ subtest 'sends emails to a user' => sub {
     my @emails = $mech->get_email;
     $mech->email_count_is(1);
 
-    my $email = @emails[0];
+    my $email = $emails[0];
     my $body = $mech->get_text_body_from_email($email);
 
     like $body, qr/Problem the first/, 'Email body matches report name';

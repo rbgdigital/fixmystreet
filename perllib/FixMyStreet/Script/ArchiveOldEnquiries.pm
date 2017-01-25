@@ -55,8 +55,8 @@ sub send_email_and_close {
 
     return if scalar(@problems) == 0;
 
-    $cobrand->set_lang_and_domain(@problems[0]->lang, 1);
     my $cobrand = FixMyStreet::Cobrand->get_class_for_moniker('oxfordshire')->new();
+    $cobrand->set_lang_and_domain($problems[0]->lang, 1);
     FixMyStreet::Map::set_map_class($cobrand->map_type);
 
     my %h = (
@@ -78,7 +78,7 @@ sub send_email_and_close {
         undef,
         undef,
         $cobrand,
-        @problems[0]->lang,
+        $problems[0]->lang,
     );
 
     $problems->update({ state => 'closed' });
