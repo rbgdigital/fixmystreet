@@ -68,7 +68,7 @@ FixMyStreet::override_config {
         $report->update;
         my $reputation = $report->user->get_extra_metadata("reputation") || 0;
         $mech->get_ok("/report/$report_id");
-        $mech->submit_form_ok({ button => 'save', with_fields => { public_update => "This is a public update.", include_update => "1" } });
+        $mech->submit_form_ok({ button => 'save', with_fields => { public_update => "This is a public update.", include_update => "1", state => 'action scheduled' } });
         $report->discard_changes;
         is $report->comments->first->text, "This is a public update.", 'Update was created';
         is $report->get_extra_metadata('inspected'), 1, 'report marked as inspected';
