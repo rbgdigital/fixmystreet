@@ -30,6 +30,7 @@ subtest 'sets reports to the correct status' => sub {
         areas      => ',2237,',
         lastupdate => '2015-12-01 08:00:00',
         user       => $user,
+        state      => 'investigating',
     });
 
     my ($report3, $report4) = $mech->create_problems_for_body(2, $oxfordshire->id, 'Test', {
@@ -42,6 +43,7 @@ subtest 'sets reports to the correct status' => sub {
         areas      => ',2237,',
         lastupdate => '2014-12-01 07:00:00',
         user       => $user,
+        state      => 'in progress'
     });
 
     print $report2->bodies_str;

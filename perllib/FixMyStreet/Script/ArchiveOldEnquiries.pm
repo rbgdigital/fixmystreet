@@ -17,7 +17,7 @@ my $query = {
       lastupdate => { '<', "2016-01-01 00:00:00" },
       lastupdate => { '>', "2015-01-01 00:00:00" },
     ],
-    state      => { '!=', 'closed' },
+    state      => [ FixMyStreet::DB::Result::Problem->open_states() ],
 };
 
 sub archive {
@@ -40,7 +40,7 @@ sub archive {
     my $problems_2014 = FixMyStreet::DB->resultset('Problem')->search({
         bodies_str => { 'LIKE', '%2237%'},
         lastupdate => { '<', "2015-01-01 00:00:00" },
-        state      => { '!=', 'closed' },
+        state      => [ FixMyStreet::DB::Result::Problem->open_states() ],
     });
 
     $problems_2014->update({ state => 'closed' });
