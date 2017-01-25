@@ -6,7 +6,7 @@ FixMyStreet is being updated in Oxfordshire to improve how problems get fixed.
 
 As part of these updates, we are closing old reports that appear to be resolved but remain open in the system.
 
-We noticed that you have [% report_count %] old reports on the system, which we've listed below.
+We noticed that you have [% report_count %] old [% nget('report', 'reports', report_count) %] on the system, which we've listed below.
 
 If your report is no longer an issue, you don't need to do anything.
 

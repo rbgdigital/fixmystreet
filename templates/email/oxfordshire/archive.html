@@ -22,7 +22,7 @@ INCLUDE '_email_top.html';
     resolved but remain open in the system.
   </p>
   <p style="[% p_style %]">
-    We noticed that you have [% report_count %] old reports on the system,
+    We noticed that you have [% report_count %] old [% nget('report', 'reports', report_count) %] on the system,
     which we've listed below.
   </p>
   <p style="[% p_style %]">
