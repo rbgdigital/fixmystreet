@@ -781,7 +781,7 @@ subtest 'get report time ago in weeks' => sub {
         confirmed => DateTime->now->subtract( weeks => 2)
     } );
 
-    is $problem->time_ago, '2 weeks', 'problem returns time ago in weeks';
+    is $problem->weeks_ago, '2 weeks', 'problem returns time ago in weeks';
 };
 
 subtest 'generates a tokenised url for a user' => sub {

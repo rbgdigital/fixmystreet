@@ -685,13 +685,13 @@ sub body {
     return $body;
 }
 
-=head2 time_ago
+=head2 weeks_ago
 
   Returns how long ago a problem was reported in weeks
 
 =cut
 
-sub time_ago {
+sub weeks_ago {
   my $self = shift;
 
   return Utils::prettify_duration( time() - $self->confirmed->epoch, 'week' );
