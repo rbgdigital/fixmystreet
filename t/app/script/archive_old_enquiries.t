@@ -12,6 +12,7 @@ $mech->clear_emails_ok;
 
 my $user = $mech->create_user_ok('test@example.com', name => 'Test User');
 my $oxfordshire = $mech->create_body_ok(2237, 'Oxfordshire County Council', id => 2237);
+my $west_oxon = $mech->create_body_ok(2420, 'West Oxfordshire District Council', id => 2420);
 
 subtest 'sets reports to the correct status' => sub {
     my ($report) = $mech->create_problems_for_body(1, $oxfordshire->id, 'Test', {
@@ -19,17 +20,31 @@ subtest 'sets reports to the correct status' => sub {
         user_id    => $user->id,
     });
 
-    my ($report1, $report2) = $mech->create_problems_for_body(2, $oxfordshire->id, 'Test', {
+    my ($report1) = $mech->create_problems_for_body(1, $oxfordshire->id . "," .$west_oxon->id, 'Test', {
         areas      => ',2237,',
         lastupdate => '2015-12-01 07:00:00',
         user       => $user,
     });
 
-    my ($report3, $report4, $report5) = $mech->create_problems_for_body(3, $oxfordshire->id, 'Test', {
+    my ($report2) = $mech->create_problems_for_body(1, $oxfordshire->id, 'Test 2', {
+        areas      => ',2237,',
+        lastupdate => '2015-12-01 08:00:00',
+        user       => $user,
+    });
+
+    my ($report3, $report4) = $mech->create_problems_for_body(2, $oxfordshire->id, 'Test', {
         areas      => ',2237,',
         lastupdate => '2014-12-01 07:00:00',
         user       => $user,
     });
+
+    my ($report5) = $mech->create_problems_for_body(1, $oxfordshire->id . "," .$west_oxon->id, 'Test', {
+        areas      => ',2237,',
+        lastupdate => '2014-12-01 07:00:00',
+        user       => $user,
+    });
+
+    print $report2->bodies_str;
 
     FixMyStreet::Script::ArchiveOldEnquiries::archive();
 

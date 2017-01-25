@@ -11,15 +11,17 @@ use FixMyStreet::Cobrand;
 use FixMyStreet::Map;
 use FixMyStreet::Email;
 
+my $query = {
+    bodies_str => { 'LIKE', '%2237%'},
+    -and       => [
+      lastupdate => { '<', "2016-01-01 00:00:00" },
+      lastupdate => { '>', "2015-01-01 00:00:00" },
+    ],
+    state      => { '!=', 'closed' },
+};
+
 sub archive {
-    my @user_ids = FixMyStreet::DB->resultset('Problem')->search({
-        bodies_str => '2237',
-        -and       => [
-          lastupdate => { '<', "2016-01-01 00:00:00" },
-          lastupdate => { '>', "2015-01-01 00:00:00" },
-        ],
-        state      => { '!=', 'closed' },
-    },
+    my @user_ids = FixMyStreet::DB->resultset('Problem')->search($query,
     {
         distinct => 1,
         columns  => ['user_id'],
@@ -36,7 +38,7 @@ sub archive {
     }
 
     my $problems_2014 = FixMyStreet::DB->resultset('Problem')->search({
-        bodies_str => '2237',
+        bodies_str => { 'LIKE', '%2237%'},
         lastupdate => { '<', "2015-01-01 00:00:00" },
         state      => { '!=', 'closed' },
     });
@@ -47,14 +49,7 @@ sub archive {
 sub send_email_and_close {
     my ($user) = @_;
 
-    my $problems = $user->problems->search({
-        bodies_str => '2237',
-        -and       => [
-          lastupdate => { '<', "2016-01-01 00:00:00" },
-          lastupdate => { '>', "2015-01-01 00:00:00" },
-        ],
-        state      => { '!=', 'closed' },
-    });
+    my $problems = $user->problems->search($query);
 
     my @problems = $problems->all;
 
