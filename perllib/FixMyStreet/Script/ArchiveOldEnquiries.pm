@@ -30,7 +30,7 @@ sub archive {
     @user_ids = map { $_->user_id } @user_ids;
 
     my $users = FixMyStreet::DB->resultset('User')->search({
-        id => @user_ids
+        id => \@user_ids
     });
 
     while ( my $user = $users->next ) {
