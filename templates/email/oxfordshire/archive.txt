@@ -1,4 +1,4 @@
-Subject: Your reports on [% site_name %] 
+Subject: Your reports on [% site_name %]
 
 Hello [% user.name %],
 
@@ -11,7 +11,7 @@ We noticed that you have [% report_count %] old reports on the system, which we'
 If your report is no longer an issue, you don't need to do anything.
 
 If you believe that your report is still a problem, you can reopen it by clicking or copying and pasting
-the link marked 'Reopon?' by a report.
+the link marked 'Reopen?' by a report.
 
 [% FOR report IN reports %]
 
