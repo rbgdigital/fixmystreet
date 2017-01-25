@@ -53,6 +53,8 @@ sub send_email_and_close {
 
     my @problems = $problems->all;
 
+    return if scalar(@problems) == 0;
+
     my $cobrand = FixMyStreet::Cobrand->get_class_for_moniker(@problems[0]->cobrand)->new();
     $cobrand->set_lang_and_domain(@problems[0]->lang, 1);
     FixMyStreet::Map::set_map_class($cobrand->map_type);
