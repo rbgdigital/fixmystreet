@@ -419,15 +419,4 @@ has categories => (
     },
 );
 
-has initials => (
-    is => 'ro',
-    lazy => 1,
-    default => sub {
-        my $self = shift;
-        return unless $self->name;
-        my @parts = split(" ", $self->name);
-        return join("", map { substr($_, 0, 1) } @parts);
-    },
-);
-
 1;
