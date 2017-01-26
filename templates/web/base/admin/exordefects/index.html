@@ -22,7 +22,7 @@
     [% loc('Inspector:') %] <select class="form-control" id='user_id' name='user_id'>
         <option value=''>[% loc('All inspectors') %]</option>
         [% FOR inspector IN inspectors %]
-            <option value="[% inspector.id %]" [% 'selected' IF user_id == inspector.id %]>[% inspector.name %] ([% inspector.initials %])</option>
+            <option value="[% inspector.id %]" [% 'selected' IF user_id == inspector.id %]>[% inspector.name %] ([% inspector.get_extra_metadata('initials') %])</option>
         [% END %]
     </select>
     </p>
