@@ -14,15 +14,17 @@ function isR2L() {
 
 function make_multi(id) {
     var $id = $('#' + id),
-        all = $id.data('all');
+        all = $id.data('all'),
+        presets = $id.data('presets') === undefined ? [{
+          name: all,
+          options: []
+        }] : $id.data('presets');
+
     $id.multiSelect({
         allText: all,
         noneText: all,
         positionMenuWithin: $('#side'),
-        presets: [{
-            name: all,
-            options: []
-        }]
+        presets: presets
     });
 }
 
