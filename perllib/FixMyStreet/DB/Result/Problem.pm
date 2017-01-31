@@ -696,11 +696,11 @@ sub time_ago {
 =cut
 
 sub days_ago {
-  my ( $self, $date ) = @_;
-  $date ||= 'confirmed';
-  my $now = DateTime->now( time_zone => FixMyStreet->time_zone || FixMyStreet->local_time_zone );
-  my $duration = $now->delta_days($self->$date);
-  return $duration->delta_days;
+    my ( $self, $date ) = @_;
+    $date ||= 'confirmed';
+    my $now = DateTime->now( time_zone => FixMyStreet->time_zone || FixMyStreet->local_time_zone );
+    my $duration = $now->delta_days($self->$date);
+    return $duration->delta_days;
 }
 
 =head2 response_templates
