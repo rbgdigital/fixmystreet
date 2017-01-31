@@ -46,7 +46,7 @@
             [% END %]
             [%- IF c.cobrand.moniker != 'fixamingata' %] [%# Default: %]
                 [%- IF problem.days_ago <= 28 %]
-                  [% tprintf(loc('Reported %s days ago'), problem.days_ago) %]
+                  [% tprintf(loc('Reported %s %s ago'), problem.days_ago, nget( loc('week'), loc('weeks'), problem.days_ago ) ) %]
                 [%- ELSE %]
                   [% prettify_dt( problem.confirmed, 1 ) %]
                 [%- END %]
