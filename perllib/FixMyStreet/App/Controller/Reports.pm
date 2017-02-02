@@ -378,6 +378,19 @@ sub load_and_group_problems : Private {
         non_public => 0,
         state      => [ keys %$states ]
     };
+    my $filters = {
+        order_by => $c->stash->{sort_order},
+        rows => $c->cobrand->reports_per_page,
+    };
+
+    if (defined $c->stash->{shortlist_status}) {
+        if ($c->stash->{shortlist_status} == 1) {
+          $where->{'me.id'} = { '=', \"user_planned_reports.report_id"};
+          $filter->{join} = 'user_planned_reports';
+        } else {
+          $where->{'me.id'} = { 'NOT IN', \"(SELECT problem.id FROM problem, user_planned_reports WHERE problem.id = user_planned_reports.report_id)" };
+        }
+    }
 
     my $not_open = [ FixMyStreet::DB::Result::Problem::fixed_states(), FixMyStreet::DB::Result::Problem::closed_states() ];
     if ( $type eq 'new' ) {
@@ -413,11 +426,9 @@ sub load_and_group_problems : Private {
 
     $problems = $problems->search(
         $where,
-        {
-            order_by => $c->stash->{sort_order},
-            rows => $c->cobrand->reports_per_page,
-        }
+        $filter
     )->include_comment_counts->page( $page );
+
     $c->stash->{pager} = $problems->pager;
 
     my ( %problems, @pins );
@@ -500,6 +511,15 @@ sub stash_report_filter_status : Private {
         %filter_problem_states = %$s;
     }
 
+    if ($status{shortlisted}) {
+        $c->stash->{shortlist_status} = 1;
+    }
+
+    if ($status{unshortlisted}) {
+        $c->stash->{shortlist_status} = 0;
+    }
+
+
     $c->stash->{filter_problem_states} = \%filter_problem_states;
     $c->stash->{filter_status} = \%filter_status;
     return 1;
@@ -577,4 +597,3 @@ Licensed under the Affero GPL.
 __PACKAGE__->meta->make_immutable;
 
 1;
-
