@@ -1200,5 +1200,11 @@ HASHREF.
 sub reputation_increment_states { return wantarray ? () : {} };
 sub reputation_decrement_states { return wantarray ? () : {} };
 
+sub traffic_management_options {
+    return [
+        _("Yes"),
+        _("No"),
+    ];
+}
 
 1;

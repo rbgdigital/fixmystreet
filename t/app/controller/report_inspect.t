@@ -202,6 +202,15 @@ FixMyStreet::override_config {
         is $report->user->get_extra_metadata('reputation'), $reputation+1, "User reputation was increased";
     };
 
+    subtest "Oxfordshire-specific traffic management options are shown" => sub {
+        $report->update({ state => 'confirmed' });
+        $mech->get_ok("/report/$report_id");
+        $mech->submit_form_ok({ button => 'save', with_fields => { traffic_information => 'Signs and Cones', state => 'Planned', save_inspected => undef } });
+        $report->discard_changes;
+        is $report->state, 'planned', 'report state changed';
+        is $report->get_extra_metadata('traffic_information'), 'Signs and Cones', 'report data changed';
+    };
+
 };
 
 FixMyStreet::override_config {

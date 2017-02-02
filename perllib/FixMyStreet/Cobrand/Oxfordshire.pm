@@ -155,4 +155,13 @@ sub reputation_increment_states {
     return wantarray ? keys %{$states} : $states;
 };
 
+sub traffic_management_options {
+    return [
+        "Signs and Cones",
+        "Stop and Go Boards",
+        "High Speed Roads",
+    ];
+}
+
+
 1;
