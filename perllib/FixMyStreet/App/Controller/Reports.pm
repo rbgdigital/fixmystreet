@@ -378,7 +378,7 @@ sub load_and_group_problems : Private {
         non_public => 0,
         state      => [ keys %$states ]
     };
-    my $filters = {
+    my $filter = {
         order_by => $c->stash->{sort_order},
         rows => $c->cobrand->reports_per_page,
     };
