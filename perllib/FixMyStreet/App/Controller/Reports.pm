@@ -383,14 +383,12 @@ sub load_and_group_problems : Private {
         rows => $c->cobrand->reports_per_page,
     };
 
-    if (defined $c->stash->{shortlist_status}) {
-        if ($c->stash->{shortlist_status} == 1) {
-          $where->{'me.id'} = { '=', \"user_planned_reports.report_id"};
-          $where->{'user_planned_reports.removed'} = { 'IS', \"NULL" };
-          $filter->{join} = 'user_planned_reports';
-        } else {
-          $where->{'me.id'} = { 'NOT IN', \"(SELECT problem.id FROM problem, user_planned_reports WHERE problem.id = user_planned_reports.report_id AND user_planned_reports.removed IS NULL)" };
-        }
+    if (defined $c->stash->{filter_status}{shortlisted}) {
+        $where->{'me.id'} = { '=', \"user_planned_reports.report_id"};
+        $where->{'user_planned_reports.removed'} = { 'IS', \"NULL" };
+        $filter->{join} = 'user_planned_reports';
+    } elsif (defined $c->stash->{filter_status}{unshortlisted}) {
+        $where->{'me.id'} = { 'NOT IN', \"(SELECT problem.id FROM problem, user_planned_reports WHERE problem.id = user_planned_reports.report_id AND user_planned_reports.removed IS NULL)" };
     }
 
     my $not_open = [ FixMyStreet::DB::Result::Problem::fixed_states(), FixMyStreet::DB::Result::Problem::closed_states() ];
@@ -513,11 +511,11 @@ sub stash_report_filter_status : Private {
     }
 
     if ($status{shortlisted}) {
-        $c->stash->{shortlist_status} = 1;
+        $filter_status{shortlisted} = 1;
     }
 
     if ($status{unshortlisted}) {
-        $c->stash->{shortlist_status} = 0;
+        $filter_status{unshortlisted} = 1;
     }
 
     if (keys %filter_problem_states == 0) {
