@@ -386,9 +386,10 @@ sub load_and_group_problems : Private {
     if (defined $c->stash->{shortlist_status}) {
         if ($c->stash->{shortlist_status} == 1) {
           $where->{'me.id'} = { '=', \"user_planned_reports.report_id"};
+          $where->{'user_planned_reports.removed'} = { 'IS', \"NULL" };
           $filter->{join} = 'user_planned_reports';
         } else {
-          $where->{'me.id'} = { 'NOT IN', \"(SELECT problem.id FROM problem, user_planned_reports WHERE problem.id = user_planned_reports.report_id)" };
+          $where->{'me.id'} = { 'NOT IN', \"(SELECT problem.id FROM problem, user_planned_reports WHERE problem.id = user_planned_reports.report_id AND user_planned_reports.removed IS NULL)" };
         }
     }
 

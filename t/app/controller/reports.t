@@ -247,21 +247,28 @@ subtest "it lists shortlisted reports" => sub {
 
         my ($shortlisted_problem) = $mech->create_problems_for_body(1, $body_edin_id, 'Shortlisted report');
         my ($unshortlisted_problem) = $mech->create_problems_for_body(1, $body_edin_id, 'Unshortlisted report');
+        my ($removed_from_shortlist_problem) = $mech->create_problems_for_body(1, $body_edin_id, 'Removed from shortlist report');
+
         $user->add_to_planned_reports($shortlisted_problem);
+        $user->add_to_planned_reports($removed_from_shortlist_problem);
+        $user->remove_from_planned_reports($removed_from_shortlist_problem);
 
         $mech->get_ok('/reports/City+of+Edinburgh+Council?status=shortlisted');
 
         $mech->content_contains('Shortlisted report');
         $mech->content_lacks('Unshortlisted report');
+        $mech->content_lacks('Removed from shortlist report');
 
         $mech->get_ok('/reports/City+of+Edinburgh+Council?status=shortlisted,open');
 
         $mech->content_contains('Shortlisted report');
         $mech->content_lacks('Unshortlisted report');
+        $mech->content_lacks('Removed from shortlist report');
 
         $mech->get_ok('/reports/City+of+Edinburgh+Council?status=unshortlisted,open');
 
         $mech->content_contains('Unshortlisted report');
+        $mech->content_contains('Removed from shortlist report');
         $mech->content_lacks('Shortlisted report');
     };
 };
