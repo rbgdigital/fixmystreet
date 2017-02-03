@@ -233,5 +233,37 @@ subtest "test greenwich all reports page" => sub {
     }
 };
 
-done_testing();
+subtest "it lists shortlisted reports" => sub {
+    FixMyStreet::override_config {
+        MAPIT_URL => 'http://mapit.mysociety.org/'
+    }, sub {
+        my $body = FixMyStreet::App->model('DB::Body')->find( $body_edin_id );
+        my $user = $mech->log_in_ok( 'test@example.com' );
+        $user->update({ from_body => $body });
+        $user->user_body_permissions->find_or_create({
+            body => $body,
+            permission_type => 'planned_reports',
+        });
 
+        my ($shortlisted_problem) = $mech->create_problems_for_body(1, $body_edin_id, 'Shortlisted report');
+        my ($unshortlisted_problem) = $mech->create_problems_for_body(1, $body_edin_id, 'Unshortlisted report');
+        $user->add_to_planned_reports($shortlisted_problem);
+
+        $mech->get_ok('/reports/City+of+Edinburgh+Council?status=shortlisted');
+
+        $mech->content_contains('Shortlisted report');
+        $mech->content_lacks('Unshortlisted report');
+
+        $mech->get_ok('/reports/City+of+Edinburgh+Council?status=shortlisted,open');
+
+        $mech->content_contains('Shortlisted report');
+        $mech->content_lacks('Unshortlisted report');
+
+        $mech->get_ok('/reports/City+of+Edinburgh+Council?status=unshortlisted,open');
+
+        $mech->content_contains('Unshortlisted report');
+        $mech->content_lacks('Shortlisted report');
+    };
+};
+
+done_testing();
