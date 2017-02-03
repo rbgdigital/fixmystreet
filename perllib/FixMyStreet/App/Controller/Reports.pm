@@ -519,6 +519,10 @@ sub stash_report_filter_status : Private {
         $c->stash->{shortlist_status} = 0;
     }
 
+    if (keys %filter_problem_states == 0) {
+      my $s = FixMyStreet::DB::Result::Problem->open_states();
+      %filter_problem_states = (%filter_problem_states, %$s);
+    }
 
     $c->stash->{filter_problem_states} = \%filter_problem_states;
     $c->stash->{filter_status} = \%filter_status;
