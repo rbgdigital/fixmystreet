@@ -253,6 +253,10 @@ subtest "it lists shortlisted reports" => sub {
         $user->add_to_planned_reports($removed_from_shortlist_problem);
         $user->remove_from_planned_reports($removed_from_shortlist_problem);
 
+        $mech->get_ok('/reports/City+of+Edinburgh+Council');
+        $mech->content_contains('<option value="shortlisted">Shortlisted</option>');
+        $mech->content_contains('<option value="unshortlisted">Unshortlisted</option>');
+
         $mech->get_ok('/reports/City+of+Edinburgh+Council?status=shortlisted');
 
         $mech->content_contains('Shortlisted report');
@@ -270,6 +274,12 @@ subtest "it lists shortlisted reports" => sub {
         $mech->content_contains('Unshortlisted report');
         $mech->content_contains('Removed from shortlist report');
         $mech->content_lacks('Shortlisted report');
+
+        $user->admin_user_body_permissions->delete;
+
+        $mech->get_ok('/reports/City+of+Edinburgh+Council');
+        $mech->content_lacks('<option value="shortlisted">Shortlisted</option>');
+        $mech->content_lacks('<option value="unshortlisted">Unshortlisted</option>');
     };
 };
 
